@@ -7,7 +7,7 @@
 1. Download the zip file by clicking, `Code` at the top, and clicking, `Download ZIP`.
 2. Unzip the downloaded file.
 3. Go to `chrome://extensions` in the URL bar.
-4. Check the developer mode option, or skip it is already enabled.
+4. Check the developer mode option, or skip if it is already enabled.
 5. Select, "Load unpacked", and select the directory of the unzipped folder.
 
 ### How to Use
