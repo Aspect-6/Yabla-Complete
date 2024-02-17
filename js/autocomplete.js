@@ -8,14 +8,11 @@
             if (totalPoints.innerText >= 200) {
                 document.getElementsByClassName("quitgame")[0].click()
                 return
-            }
-            if (totalPoints.innerText !== "") {
+            } else if (totalPoints.innerText !== "") {
                 document.getElementsByClassName("play_again")[0].click()
                 totalPoints.innerText = ""
                 setTimeout(start, 2000)
-                return
-            }
-            start()
+            } else start()
         }, 4200)
     }
 
