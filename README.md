@@ -12,7 +12,7 @@
 
 ### How to Use
 
-Go to a Yabla video player page. The URL should look something similar to `https://<your lang>.yabla.com/player<your video ID>`.
+Go to a Yabla video player page. The URL should look something similar to `https://<your lang>.yabla.com/multiple_choice.php<metadata>`.
 
 Press `Command` + `Ctrl` + `A` to trigger active mode. This will keep automatically answering questions until the score reaches 200 points or more. If the limit for you is lower, you may press, "Quit game", in the top right after a round has been completed.  If you start the game by manually selecting the "Start game" button, it will be on normal mode. Becareful and do not click options besides the "Quit game" button in the top right, or you make cause the extension to crash. If this does happen, simply go to yabla assignments panel, and select the video again.
 
