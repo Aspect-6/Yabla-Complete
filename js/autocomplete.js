@@ -1,28 +1,53 @@
 ;(function () {
-    function start() {
-        answerQuestion()
-        // Decide whether to go to next question, start next round, or quit the game
-        setTimeout(() => {
-            const totalPoints =
-                document.getElementsByClassName("total_points")[0]
-            if (totalPoints.innerText >= 200) {
-                document.getElementsByClassName("quitgame")[0].click()
-                return
-            }
-            if (totalPoints.innerText !== "") {
-                document.getElementsByClassName("play_again")[0].click()
-                totalPoints.innerText = ""
-                setTimeout(start, 2000)
-                return
-            }
-            start()
-        }, 4200)
+    function start(type) {
+        if (type === "mc") {
+            selectAnswer()
+            // Decide whether to go to next question, start next round, or quit the game
+            setTimeout(() => {
+                const totalPoints =
+                    document.getElementsByClassName("total_points")[0]
+                if (totalPoints.innerText >= 200) {
+                    document.getElementsByClassName("quitgame")[0].click()
+                    return
+                }
+                if (totalPoints.innerText !== "") {
+                    document.getElementsByClassName("play_again")[0].click()
+                    totalPoints.innerText = ""
+                    setTimeout(() => start("mc"), 2000)
+                    return
+                }
+                start("mc")
+            }, 4200)
+        }
+        if (type === "fitb") {
+            fillInBlank()
+            // Decide whether to go to next question, start next round, or quit the game
+            setTimeout(() => {
+                const totalPoints =
+                    document.getElementsByClassName("total_points")[0]
+                if (totalPoints.innerText >= 100) {
+                    document.getElementsByClassName("quitgame")[0].click()
+                    return
+                }
+                if (totalPoints.innerText !== "") {
+                    document.getElementsByClassName("play_again")[0].click()
+                    totalPoints.innerText = ""
+                    setTimeout(() => start("fitb"), 2000)
+                    return
+                }
+                start("fitb")
+            }, 4200)
+        }
     }
 
     document.addEventListener("keydown", (e) => {
         if (e.key === "a" && e.metaKey && e.ctrlKey) {
             document.getElementsByClassName("blue button start_game")[0].click() // Start the game
-            setTimeout(start, 2000) // Call for first time to start the loop
+            setTimeout(() => start("mc"), 2000) // Call for first time to start the loop
+        }
+        if (e.key === "z" && e.metaKey && e.ctrlKey) {
+            document.getElementsByClassName("blue button start_game")[0].click() // Start the game
+            setTimeout(() => start("fitb"), 2000) // Call for first time to start the loop
         }
     })
 
@@ -47,7 +72,7 @@
         .map((arr) => arr.join(" "))
         .join(" ")
 
-    function answerQuestion() {
+    function selectAnswer() {
         let words = document.getElementsByClassName("question")[0].children
 
         let options =
@@ -89,5 +114,52 @@
 
         // Select the correct option
         options[correctAnswerIndex].click()
+    }
+    function fillInBlank() {
+        let words = document.getElementsByClassName("question")[0].children
+
+        let inputIndex, correctAnswer
+
+        // Get index of the input in the question div
+        for (let i = 0; i < words.length; i++)
+            if (words[i].classList.contains("underline")) inputIndex = i
+
+        // If the input is the first word
+        if (inputIndex === 0) {
+            let wordsAfterInput = ""
+
+            // Find the words after the underline
+            for (let i = 1; i < words.length; i++)
+                wordsAfterInput += `${words[i].innerText} `
+
+            // Find the correct word
+            correctAnswer = transcript.match(
+                new RegExp(
+                    "(\\p{L}+)(?=\\s" + wordsAfterInput.trim() + "\\b)",
+                    "gui"
+                )
+            )[0]
+        } else {
+            let wordsBeforeInput = ""
+
+            // Find the words before the underline
+            for (let i = 0; i < inputIndex; i++)
+                wordsBeforeInput += `${words[i].innerText} `
+
+            // Find the correct word
+            correctAnswer = transcript.match(
+                new RegExp(
+                    "(?<=\\b" + wordsBeforeInput.trim() + "\\s)(\\p{L}+)",
+                    "gui"
+                )
+            )[0]
+        }
+
+        // Submit the answer
+        document.getElementsByClassName("answer")[0].value = correctAnswer
+        document.getElementById("submit_answer").click()
+        setTimeout(() => {
+            document.getElementsByClassName("next")[0].click()
+        }, 2000)
     }
 })()
