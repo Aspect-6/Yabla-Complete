@@ -103,8 +103,8 @@ let mclimit, fitblimit, punctuation
                                   .replace(/(\r\n|\n|\r)/gm, "")
                           )
                   )
+                  .filter((item) => item)[0]
                   .map((item) => item.transcript_words.map(({ word }) => word))
-                  .filter((val) => val)[0]
                   .map((arr) => arr.join(" "))
                   .join(" ")
     }
