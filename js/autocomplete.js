@@ -12,9 +12,11 @@ let mclimit, fitblimit
                 .innerText.split(" ")[0]
 
             if (
-                (type === "mc" && allTimePoints >= (mclimit ? mclimit : 200)) ||
-                (type === "fitb" &&
-                    allTimePoints >= (fitblimit ? fitblimit : 100))
+                totalPoints.innerText !== "" &&
+                ((type === "mc" &&
+                    allTimePoints >= (mclimit ? mclimit : 200)) ||
+                    (type === "fitb" &&
+                        allTimePoints >= (fitblimit ? fitblimit : 100)))
             ) {
                 document.getElementsByClassName("quitgame")[0].click()
                 return
