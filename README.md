@@ -29,6 +29,8 @@ Press `Command` + `Ctrl` + `X` to download the transcript. The file will save as
 
 
 ## Notes
+* All of the configuration options will be erased every time you navigate to a different page or refresh the current page
 * If you start the game by manually selecting the "Start game" button, it will be on normal mode.
 * Be careful, and do not click anything besides the "Quit game" button in the top right, or you may cause the extension to crash. If this does happen, simply go to your yabla assignments panel, and select the video again.
 * Autocompletion may not work on some videos or may require you to refresh the page and trigger active mode again. If the game is going smoothly, and it stopped answer all of a sudden, there may be an internal error. You can fix this by refreshing the page and triggering active mode again.
+* The default behavior of transcript download will download the transcript without punctuation.
