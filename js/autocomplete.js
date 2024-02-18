@@ -1,5 +1,10 @@
 let mclimit, fitblimit
 ;(function () {
+    if (
+        !location.href.includes("multiple_choice.php") &&
+        !location.href.includes("fill_in_the_blank.php")
+    )
+        return
     function start(type) {
         // Start the game
         ;(type === "mc" && selectAnswer()) || (type === "fitb" && fillInBlank())
