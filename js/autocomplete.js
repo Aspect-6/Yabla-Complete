@@ -8,7 +8,7 @@ let mclimit, fitblimit, punctuation
         return
 
     function start(type) {
-        ;(type === "mc" && selectAnswer()) || (type === "fitb" && fillInBlank())
+        answerQuestion(type)
         setTimeout(() => {
             const totalPoints =
                 document.getElementsByClassName("total_points")[0]
@@ -30,14 +30,12 @@ let mclimit, fitblimit, punctuation
                 document.getElementsByClassName("play_again")[0].click()
                 totalPoints.innerText = ""
                 setTimeout(
-                    () =>
-                        (type === "mc" && start("mc")) ||
-                        (type === "fitb" && start("fitb")),
+                    () => (type === "mc" ? start(type) : start(type)),
                     2000
                 )
                 return
             }
-            type === "mc" ? start("mc") : start("fitb")
+            type === "mc" ? start(type) : start(type)
         }, 4200)
     }
 
@@ -106,7 +104,8 @@ let mclimit, fitblimit, punctuation
                   .map((arr) => arr.join(" "))
                   .join(" ")
     }
-    function selectAnswer() {
+
+    function answerQuestion(type) {
         const transcript = generateTranscript()
 
         let words = document.getElementsByClassName("question")[0].children
@@ -114,88 +113,59 @@ let mclimit, fitblimit, punctuation
         let options =
             document.getElementsByClassName("choice_buttons")[0].children
 
-        let underlineIndex, correctAnswerIndex
+        let blankIndex, correctAnswer, correctAnswerIndex
 
         for (let i = 0; i < words.length; i++)
-            if (words[i].classList.contains("underline")) underlineIndex = i
+            if (words[i].classList.contains("underline")) blankIndex = i
 
-        if (underlineIndex === 0) {
-            let wordsAfterUnderline = ""
+        if (blankIndex === 0) {
+            let wordsAfterBlank = ""
 
             for (let i = 1; i < words.length; i++)
-                wordsAfterUnderline += `${words[i].innerText} `
-            
-            Array.from(options).forEach((option, i) => {
-                transcript.includes(
-                    `${option.innerText} ${wordsAfterUnderline}`
-                ) && (correctAnswerIndex = i)
-            })
+                wordsAfterBlank += `${words[i].innerText} `
+
+            type === "mc"
+                ? Array.from(options).forEach((option, i) => {
+                      transcript.includes(
+                          `${option.innerText} ${wordsAfterBlank}`
+                      ) && (correctAnswerIndex = i)
+                  })
+                : (correctAnswer = transcript.match(
+                      new RegExp(
+                          "(\\p{L}+)(?=\\s" + wordsAfterBlank.trim() + "\\b)",
+                          "gui"
+                      )
+                  )[0])
         } else {
-            let wordsBeforeUnderline = ""
+            let wordsBeforeBlank = ""
 
-            for (let i = 0; i < underlineIndex; i++)
-                wordsBeforeUnderline += `${words[i].innerText} `
+            for (let i = 0; i < blankIndex; i++)
+                wordsBeforeBlank += `${words[i].innerText} `
 
-            // Find the correct word
-            Array.from(options).forEach((option, i) => {
-                transcript.includes(
-                    `${wordsBeforeUnderline}${option.innerText}`
-                ) && (correctAnswerIndex = i)
-            })
+            type === "mc"
+                ? Array.from(options).forEach((option, i) => {
+                      transcript.includes(
+                          `${wordsBeforeBlank}${option.innerText}`
+                      ) && (correctAnswerIndex = i)
+                  })
+                : (correctAnswer = transcript.match(
+                      new RegExp(
+                          "(?<=\\b" + wordsBeforeBlank.trim() + "\\s)(\\p{L}+)",
+                          "gui"
+                      )
+                  )[0])
         }
 
-        // Select the correct option
-        options[correctAnswerIndex].click()
-    }
-    function fillInBlank() {
-        const transcript = generateTranscript()
-
-        let words = document.getElementsByClassName("question")[0].children
-
-        let inputIndex, correctAnswer
-
-        // Get index of the input in the question div
-        for (let i = 0; i < words.length; i++)
-            if (words[i].classList.contains("underline")) inputIndex = i
-
-        // If the input is the first word
-        if (inputIndex === 0) {
-            let wordsAfterInput = ""
-
-            // Find the words after the underline
-            for (let i = 1; i < words.length; i++)
-                wordsAfterInput += `${words[i].innerText} `
-
-            // Find the correct word
-            correctAnswer = transcript.match(
-                new RegExp(
-                    "(\\p{L}+)(?=\\s" + wordsAfterInput.trim() + "\\b)",
-                    "gui"
-                )
-            )[0]
-        } else {
-            let wordsBeforeInput = ""
-
-            // Find the words before the underline
-            for (let i = 0; i < inputIndex; i++)
-                wordsBeforeInput += `${words[i].innerText} `
-
-            // Find the correct word
-            correctAnswer = transcript.match(
-                new RegExp(
-                    "(?<=\\b" + wordsBeforeInput.trim() + "\\s)(\\p{L}+)",
-                    "gui"
-                )
-            )[0]
+        if (type === "mc") options[correctAnswerIndex].click()
+        if (type === "fitb") {
+            document.getElementsByClassName("answer")[0].value = correctAnswer
+            document.getElementById("submit_answer").click()
+            setTimeout(() => {
+                document.getElementsByClassName("next")[0].click()
+            }, 2000)
         }
-
-        // Submit the answer
-        document.getElementsByClassName("answer")[0].value = correctAnswer
-        document.getElementById("submit_answer").click()
-        setTimeout(() => {
-            document.getElementsByClassName("next")[0].click()
-        }, 2000)
     }
+
     function downloadTranscript(filename) {
         const blob = new Blob([generateTranscript()], { type: "text/plain" })
         const url = URL.createObjectURL(blob)
