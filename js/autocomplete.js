@@ -8,9 +8,7 @@ let mclimit, fitblimit, punctuation
         return
 
     function start(type) {
-        // Start the game
         ;(type === "mc" && selectAnswer()) || (type === "fitb" && fillInBlank())
-        // Decide whether to go to next question, start next round, or quit the game
         setTimeout(() => {
             const totalPoints =
                 document.getElementsByClassName("total_points")[0]
@@ -50,8 +48,8 @@ let mclimit, fitblimit, punctuation
             e.ctrlKey &&
             location.pathname === "/multiple_choice.php"
         ) {
-            document.getElementsByClassName("blue button start_game")[0].click() // Start the game
-            setTimeout(() => start("mc"), 2000) // Call for first time to start the loop
+            document.getElementsByClassName("blue button start_game")[0].click()
+            setTimeout(() => start("mc"), 2000)
         }
         if (
             e.key === "z" &&
@@ -59,8 +57,8 @@ let mclimit, fitblimit, punctuation
             e.ctrlKey &&
             location.pathname === "/fill_in_the_blank.php"
         ) {
-            document.getElementsByClassName("blue button start_game")[0].click() // Start the game
-            setTimeout(() => start("fitb"), 2000) // Call for first time to start the loop
+            document.getElementsByClassName("blue button start_game")[0].click()
+            setTimeout(() => start("fitb"), 2000)
         }
         if (
             e.key === "x" &&
@@ -118,18 +116,15 @@ let mclimit, fitblimit, punctuation
 
         let underlineIndex, correctAnswerIndex
 
-        // Get index of the underline in the question div
         for (let i = 0; i < words.length; i++)
             if (words[i].classList.contains("underline")) underlineIndex = i
 
-        // If the underline is the first word
         if (underlineIndex === 0) {
             let wordsAfterUnderline = ""
 
-            // Find the words after the underline
             for (let i = 1; i < words.length; i++)
                 wordsAfterUnderline += `${words[i].innerText} `
-            // Find the correct word
+            
             Array.from(options).forEach((option, i) => {
                 transcript.includes(
                     `${option.innerText} ${wordsAfterUnderline}`
@@ -138,7 +133,6 @@ let mclimit, fitblimit, punctuation
         } else {
             let wordsBeforeUnderline = ""
 
-            // Find the words before the underline
             for (let i = 0; i < underlineIndex; i++)
                 wordsBeforeUnderline += `${words[i].innerText} `
 
