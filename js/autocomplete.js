@@ -42,11 +42,21 @@ let mclimit, fitblimit
     }
 
     document.addEventListener("keydown", (e) => {
-        if (e.key === "a" && e.metaKey && e.ctrlKey) {
+        if (
+            e.key === "a" &&
+            e.metaKey &&
+            e.ctrlKey &&
+            location.href.includes("multiple_choice.php")
+        ) {
             document.getElementsByClassName("blue button start_game")[0].click() // Start the game
             setTimeout(() => start("mc"), 2000) // Call for first time to start the loop
         }
-        if (e.key === "z" && e.metaKey && e.ctrlKey) {
+        if (
+            e.key === "z" &&
+            e.metaKey &&
+            e.ctrlKey &&
+            location.href.includes("fill_in_the_blank.php")
+        ) {
             document.getElementsByClassName("blue button start_game")[0].click() // Start the game
             setTimeout(() => start("fitb"), 2000) // Call for first time to start the loop
         }
