@@ -92,7 +92,7 @@ let mclimit, fitblimit, punctuation
             : Array.from(document.getElementsByTagName("script"))
                   .map(
                       (script) =>
-                          script.innerText.includes("var captions") && // If the script contains the transcript, continue
+                          script.innerText.includes("var captions") &&
                           JSON.parse(
                               script.innerText
                                   .split("\t")[3]
