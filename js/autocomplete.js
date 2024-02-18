@@ -1,10 +1,12 @@
-let mclimit, fitblimit
+let mclimit, fitblimit, punctuation
 ;(function () {
     if (
-        !location.href.includes("multiple_choice.php") &&
-        !location.href.includes("fill_in_the_blank.php")
+        location.pathname !== "/multiple_choice.php" &&
+        location.pathname !== "/fill_in_the_blank.php" &&
+        location.pathname !== "/player_cdn.php"
     )
         return
+
     function start(type) {
         // Start the game
         ;(type === "mc" && selectAnswer()) || (type === "fitb" && fillInBlank())
@@ -46,7 +48,7 @@ let mclimit, fitblimit
             e.key === "a" &&
             e.metaKey &&
             e.ctrlKey &&
-            location.href.includes("multiple_choice.php")
+            location.pathname === "/multiple_choice.php"
         ) {
             document.getElementsByClassName("blue button start_game")[0].click() // Start the game
             setTimeout(() => start("mc"), 2000) // Call for first time to start the loop
@@ -55,35 +57,60 @@ let mclimit, fitblimit
             e.key === "z" &&
             e.metaKey &&
             e.ctrlKey &&
-            location.href.includes("fill_in_the_blank.php")
+            location.pathname === "/fill_in_the_blank.php"
         ) {
             document.getElementsByClassName("blue button start_game")[0].click() // Start the game
             setTimeout(() => start("fitb"), 2000) // Call for first time to start the loop
         }
+        if (
+            e.key === "x" &&
+            e.metaKey &&
+            e.ctrlKey &&
+            (location.pathname === "/multiple_choice.php" ||
+                location.pathname === "/fill_in_the_blank.php" ||
+                location.pathname === "/player_cdn.php")
+        ) {
+            downloadTranscript(
+                `${location.host.charAt(0).toUpperCase()}${location.host
+                    .split(".")[0]
+                    .slice(1)} - ${document
+                    .getElementById("episode_name")
+                    .innerText.trim()} transcript.txt`
+            )
+        }
     })
 
-    // Get transcript
-    let transcript = Array.from(document.getElementsByTagName("script"))
-        .map(
-            (script) =>
-                script.innerText.includes("var captions") && // If the script contains the transcript, continue
-                JSON.parse(
-                    script.innerText
-                        .split("\t")[3]
-                        .split("var captions = $.extend(")
-                        .join("")
-                        .split(", PlayerCommon.Mixins.Captions),\n")
-                        .join("")
-                        .replace(/(\r\n|\n|\r)/gm, "")
-                ).map(({ transcript_words }) =>
-                    transcript_words.map(({ word }) => word)
-                )
-        )
-        .filter((val) => val)[0]
-        .map((arr) => arr.join(" "))
-        .join(" ")
-
+    function generateTranscript() {
+        return location.pathname === "/player_cdn.php"
+            ? punctuation
+                ? CAPTIONS.map((item) => item.transcript).join(" ")
+                : CAPTIONS.map((item) =>
+                      item.transcript_words.map(({ word }) => word)
+                  )
+                      .map((arr) => arr.join(" "))
+                      .join(" ")
+            : Array.from(document.getElementsByTagName("script"))
+                  .map(
+                      (script) =>
+                          script.innerText.includes("var captions") && // If the script contains the transcript, continue
+                          JSON.parse(
+                              script.innerText
+                                  .split("\t")[3]
+                                  .split("var captions = $.extend(")
+                                  .join("")
+                                  .split(", PlayerCommon.Mixins.Captions),\n")
+                                  .join("")
+                                  .replace(/(\r\n|\n|\r)/gm, "")
+                          )
+                  )
+                  .map((item) => item.transcript_words.map(({ word }) => word))
+                  .filter((val) => val)[0]
+                  .map((arr) => arr.join(" "))
+                  .join(" ")
+    }
     function selectAnswer() {
+        const transcript = generateTranscript()
+
         let words = document.getElementsByClassName("question")[0].children
 
         let options =
@@ -127,6 +154,8 @@ let mclimit, fitblimit
         options[correctAnswerIndex].click()
     }
     function fillInBlank() {
+        const transcript = generateTranscript()
+
         let words = document.getElementsByClassName("question")[0].children
 
         let inputIndex, correctAnswer
@@ -172,5 +201,18 @@ let mclimit, fitblimit
         setTimeout(() => {
             document.getElementsByClassName("next")[0].click()
         }, 2000)
+    }
+    function downloadTranscript(filename) {
+        const blob = new Blob([generateTranscript()], { type: "text/plain" })
+        const url = URL.createObjectURL(blob)
+
+        // Create temporary <a> element
+        const a = document.createElement("a")
+        a.href = url
+        a.download = filename
+
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
     }
 })()

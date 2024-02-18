@@ -22,6 +22,12 @@ Go to a Yabla video player page. The URL should look something similar to `https
 
 Press `Command` + `Ctrl` + `Z` to trigger active mode. This will keep automatically filling in the correct answer to the input field until the score reaches 100 points or more. If the limit for you is lower, you may press, "Quit game", in the top right after a round has been completed. If the limit is higher, you will have to ttrigger active mode for every new round that you start, as the extension will quit the game after completing ONE round. If you wish to configure the limit manually, you will have to open the developer tools. This can be done by right-clicking anywhere on the page, and clicking `Inspect`. Go to the `Console`, and type `fitblimit = <your limit>`, and press enter. Now you can start the game via the shortcut and it will quit when it reaches the limit.
 
+## How to Download Transcripts of Videos
+Go to a Yabla video player page. The URL should contain either "multiple_choice.php", "fill_in_the_blank.php", or "player_cdn.php". The URL should look something similar to `https://<your lang>.yabla.com/<URL options><metadata>`.
+
+Press `Command` + `Ctrl` + `X` to download the transcript. The file will save as a plain text file: `<your lang> - <video name> transcript.txt`. The transcript will not contain any punctuation, but if you wish to save punctuation in the transcript, you will have to open the developer tools. This can be done by right-clicking anywhere on the page, and clicking `Inspect`. Go to the `Console`, and type `punctuation = true`, and press enter. If you wish to change back to no punctuation downloads, do the same steps but type, `punctuation = false`, instead of, `punctuation = true`.
+
+
 ## Notes
 * If you start the game by manually selecting the "Start game" button, it will be on normal mode.
 * Be careful, and do not click anything besides the "Quit game" button in the top right, or you may cause the extension to crash. If this does happen, simply go to your yabla assignments panel, and select the video again.
