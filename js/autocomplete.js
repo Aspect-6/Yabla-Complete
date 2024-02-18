@@ -6,7 +6,9 @@
             setTimeout(() => {
                 const totalPoints =
                     document.getElementsByClassName("total_points")[0]
-                if (totalPoints.innerText >= 200) {
+
+                let limit = mclimit ? mclimit : 200
+                if (totalPoints.innerText >= limit) {
                     document.getElementsByClassName("quitgame")[0].click()
                     return
                 }
@@ -25,7 +27,10 @@
             setTimeout(() => {
                 const totalPoints =
                     document.getElementsByClassName("total_points")[0]
-                if (totalPoints.innerText >= 100) {
+
+                let limit = fitblimit ? fitblimit : 200
+
+                if (totalPoints.innerText >= limit) {
                     document.getElementsByClassName("quitgame")[0].click()
                     return
                 }
