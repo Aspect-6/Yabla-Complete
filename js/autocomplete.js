@@ -1,48 +1,37 @@
+let mclimit, fitblimit
 ;(function () {
     function start(type) {
-        if (type === "mc") {
-            selectAnswer()
-            // Decide whether to go to next question, start next round, or quit the game
-            setTimeout(() => {
-                const totalPoints =
-                    document.getElementsByClassName("total_points")[0]
+        // Start the game
+        ;(type === "mc" && selectAnswer()) || (type === "fitb" && fillInBlank())
+        // Decide whether to go to next question, start next round, or quit the game
+        setTimeout(() => {
+            const totalPoints =
+                document.getElementsByClassName("total_points")[0]
+            const allTimePoints = document
+                .getElementsByClassName("score_history_link")[0]
+                .innerText.split(" ")[0]
 
-                let limit = mclimit ? mclimit : 200
-                if (totalPoints.innerText >= limit) {
-                    document.getElementsByClassName("quitgame")[0].click()
-                    return
-                }
-                if (totalPoints.innerText !== "") {
-                    document.getElementsByClassName("play_again")[0].click()
-                    totalPoints.innerText = ""
-                    setTimeout(() => start("mc"), 2000)
-                    return
-                }
-                start("mc")
-            }, 4200)
-        }
-        if (type === "fitb") {
-            fillInBlank()
-            // Decide whether to go to next question, start next round, or quit the game
-            setTimeout(() => {
-                const totalPoints =
-                    document.getElementsByClassName("total_points")[0]
-
-                let limit = fitblimit ? fitblimit : 200
-
-                if (totalPoints.innerText >= limit) {
-                    document.getElementsByClassName("quitgame")[0].click()
-                    return
-                }
-                if (totalPoints.innerText !== "") {
-                    document.getElementsByClassName("play_again")[0].click()
-                    totalPoints.innerText = ""
-                    setTimeout(() => start("fitb"), 2000)
-                    return
-                }
-                start("fitb")
-            }, 4200)
-        }
+            if (
+                (type === "mc" && allTimePoints >= (mclimit ? mclimit : 200)) ||
+                (type === "fitb" &&
+                    allTimePoints >= (fitblimit ? fitblimit : 100))
+            ) {
+                document.getElementsByClassName("quitgame")[0].click()
+                return
+            }
+            if (totalPoints.innerText !== "") {
+                document.getElementsByClassName("play_again")[0].click()
+                totalPoints.innerText = ""
+                setTimeout(
+                    () =>
+                        (type === "mc" && start("mc")) ||
+                        (type === "fitb" && start("fitb")),
+                    2000
+                )
+                return
+            }
+            type === "mc" ? start("mc") : start("fitb")
+        }, 4200)
     }
 
     document.addEventListener("keydown", (e) => {
@@ -99,7 +88,7 @@
             // Find the correct word
             Array.from(options).forEach((option, i) => {
                 transcript.includes(
-                    ` ${option.innerText}${wordsAfterUnderline}`
+                    `${option.innerText} ${wordsAfterUnderline}`
                 ) && (correctAnswerIndex = i)
             })
         } else {
@@ -112,7 +101,7 @@
             // Find the correct word
             Array.from(options).forEach((option, i) => {
                 transcript.includes(
-                    `${wordsBeforeUnderline}${option.innerText} `
+                    `${wordsBeforeUnderline}${option.innerText}`
                 ) && (correctAnswerIndex = i)
             })
         }
