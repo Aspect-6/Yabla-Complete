@@ -69,14 +69,34 @@ let mclimit, fitblimit, punctuation
             downloadTranscript(
                 `${location.host.charAt(0).toUpperCase()}${location.host
                     .split(".")[0]
-                    .slice(1)} - ${document
-                    .getElementById("episode_name")
-                    .innerText.trim()} transcript.txt`
+                    .slice(1)} - ${
+                    location.pathname === "/player_cdn.php"
+                        ? document.title.split(":")[3]
+                        : document.title.split(" -- ")[1]
+                } transcript.txt`
             )
         }
     })
 
     function generateTranscript() {
+        const transcript_obj = Array.from(
+            document.getElementsByTagName("script")
+        )
+            .map(
+                (script) =>
+                    script.innerText.includes("var captions") &&
+                    JSON.parse(
+                        script.innerText
+                            .split("\t")[3]
+                            .split("var captions = $.extend(")
+                            .join("")
+                            .split(", PlayerCommon.Mixins.Captions),\n")
+                            .join("")
+                            .replace(/(\r\n|\n|\r)/gm, "")
+                    )
+            )
+            .filter((item) => item)[0]
+
         return location.pathname === "/player_cdn.php"
             ? punctuation
                 ? CAPTIONS.map((item) => item.transcript).join(" ")
@@ -85,21 +105,9 @@ let mclimit, fitblimit, punctuation
                   )
                       .map((arr) => arr.join(" "))
                       .join(" ")
-            : Array.from(document.getElementsByTagName("script"))
-                  .map(
-                      (script) =>
-                          script.innerText.includes("var captions") &&
-                          JSON.parse(
-                              script.innerText
-                                  .split("\t")[3]
-                                  .split("var captions = $.extend(")
-                                  .join("")
-                                  .split(", PlayerCommon.Mixins.Captions),\n")
-                                  .join("")
-                                  .replace(/(\r\n|\n|\r)/gm, "")
-                          )
-                  )
-                  .filter((item) => item)[0]
+            : punctuation
+            ? transcript_obj.map((item) => item.transcript).join(" ")
+            : transcript_obj
                   .map((item) => item.transcript_words.map(({ word }) => word))
                   .map((arr) => arr.join(" "))
                   .join(" ")
